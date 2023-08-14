@@ -1,0 +1,32 @@
+Content-Type: multipart/mixed; boundary="================="
+MIME-Version: 1.0
+
+--=================
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="user-data.txt"
+
+#!/bin/bash
+
+curl -L https://omnitruck.chef.io/install.sh | sudo bash
+
+mkdir -p /etc/chef
+mkdir -p /var/chef/cookbooks
+
+cat << EOF > /etc/chef/client.rb
+require 'chef/handler/json_file'
+log_level                :info
+log_location             STDOUT
+node_name                'my-vm'
+json_attribs             '/etc/chef/run_list.json'
+cookbook_path [ "/var/chef/cookbooks" ]
+EOF
+
+# Create the run list JSON file.
+cat << EOF > /etc/chef/run_list.json
+{ "run_list": ["nvidia", "docker", "singularity"] }
+EOF
+
+
+--=================--

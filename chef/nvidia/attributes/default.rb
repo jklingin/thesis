@@ -1,0 +1,1 @@
+default["nvidia"]["driver_version"] = "470"
